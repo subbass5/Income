@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</head>
+
+<body>
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <!-- Title -->
+            <span class="mdl-layout-title">Income - Outcome</span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+
+
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">Income - Outcome</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="index.html">Home</a>
+            <a class="mdl-navigation__link" href="app.html">Income</a>
+            <a class="mdl-navigation__link" href="">state</a>
+            <a class="mdl-navigation__link" href="">Synopsis</a>
+        </nav>
+    </div>
+    <main class="mdl-layout__content">
+        <div class="page-content">
+            <!-- Your content goes here -->
+            <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp"
+                   style="width: 90%; margin-top: 10px; margin: auto;" id="datatable">
+                <!--ส่วนหัวตาราง -->
+                <thead>
+                <tr>
+                    <th>Detail</th>
+                    <th>price</th>
+                    <th>state</th>
+                </tr>
+                </thead>
+                <!--ส่วนท้ายตาราง -->
+                <tbody>
+                <!--ส่วนสมาชิกของตาราง หรือ ข้อมูล -->
+
+                <!--ส่วนสมาชิกของตาราง หรือ ข้อมูล -->
+                </tbody>
+            </table>
+            <!-- Your content goes here -->
+        </div>
+    </main>
+</div>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+   https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyAYouevJXL9hxx0KRsfKXPSZTMmEQZxxMI",
+      authDomain: "income-db-017.firebaseapp.com",
+      databaseURL: "https://income-db-017.firebaseio.com",
+      projectId: "income-db-017",
+      storageBucket: "income-db-017.appspot.com",
+      messagingSenderId: "396283722037",
+      appId: "1:396283722037:web:256b5c755bdf1915f7747c"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    // build path data
+    var datatTableFeed = "";
+    var db = firebase.database().ref("/tb_income").orderByKey();
+    db.once("value").then(function (snapshot) {
+      snapshot.forEach(function (childSnapshot) {
+        // key will be "ada" the first time and "alan" the second time
+        var key = childSnapshot.key;
+        // childData will be the actual contents of the child
+        var childData = childSnapshot.val();
+
+        datatTableFeed = "<tr onclick='window.location.href =\"edit.html?contact_id=" + key + "\" '>\
+                           <td>"+ childData.detail + "</td>\
+                           <td>"+ childData.price + "</td>\
+                           <td>"+ childData.state + "</td>\
+                         </tr>";
+        $("#datatable tbody").append(datatTableFeed)
+
+
+      });
+    });
+
+
+
+  </script>
+
+
+</body>
+
+</html>

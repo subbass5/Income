@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+</head>
+
+<body>
+<!-- Always shows a header, even in smaller screens. -->
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <!-- Title -->
+            <span class="mdl-layout-title">บันทึกรายรับ - รายจ่าย</span>
+            <!-- Add spacer, to align navigation to the right -->
+            <div class="mdl-layout-spacer"></div>
+
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <span class="mdl-layout-title">บันทึกรายรับ - รายจ่าย</span>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="index.html">Home</a>
+            <a class="mdl-navigation__link" href="app.html">Income</a>
+            <a class="mdl-navigation__link" href="">state</a>
+            <a class="mdl-navigation__link" href="">Synopsis</a>
+        </nav>
+    </div>
+    <main class="mdl-layout__content">
+        <div class="page-content">
+            <!-- Your content goes here -->
+
+            <form action="#">
+                <div style="margin:auto; margin-top:10px;" align="center">
+                    รายละเอียด <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" id="detail">
+                </div>
+                </div>
+
+                <div style="margin:auto; margin-top:10px;" align="center">
+                    จำนวนเงิน <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" id="price">
+                </div>
+                </div>
+
+                <div align="center">
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-1">
+                        <input type="radio" id="option-1" class="mdl-radio__button" name="options" value="รายรับ"
+                               checked>
+                        <span class="mdl-radio__label">รายรับ</span>
+                    </label>
+                    <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-2">
+                        <input type="radio" id="option-2" class="mdl-radio__button" name="options" value="รายจ่าย">
+                        <span class="mdl-radio__label">รายจ่าย</span>
+                    </label>
+                    <br><br>
+                    <!-- Accent-colored raised button with ripple -->
+                    <button id="btn_add" type="button"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        บันทึก
+                    </button>
+                    <button id="btn_remove" type="button"
+                            class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        ลบ
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Your content goes here -->
+        </div>
+    </main>
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+ https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyAYouevJXL9hxx0KRsfKXPSZTMmEQZxxMI",
+            authDomain: "income-db-017.firebaseapp.com",
+            databaseURL: "https://income-db-017.firebaseio.com",
+            projectId: "income-db-017",
+            storageBucket: "income-db-017.appspot.com",
+            messagingSenderId: "396283722037",
+            appId: "1:396283722037:web:256b5c755bdf1915f7747c"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
+
+        var contact_id = getUrlParameter('contact_id');
+
+
+        //สร้าง path ที่เก็บข้อมูล
+        var db = firebase.database().ref("/tb_income/" + contact_id + '/')
+
+        db.once("value").then(function (snapshot) {
+            var key = snapshot.key; // null
+            var detail = snapshot.child("detail").val();
+            var price = snapshot.child("price").val();
+            var state = snapshot.child("state").val();
+
+            $("#detail").val(detail);
+            $("#price").val(price);
+
+
+        });
+
+        //     // ดักจับเหตุการณ์เมื่อคลิกปุ่ม
+        // $("#btn_add").on("click", function () {
+        //     //ดึงข้อมูลจาก Input
+        //     var dec = $("#detail").val()
+        //     var price = $("#price").val()
+        //     var status = $('input[name="options"]:checked').val();
+        //     //สร้าง ชุดข้อมูลหรือ object
+        //     var obj = {
+        //         detail: dec,
+        //         price: price,
+        //         state: status
+        //     }
+        //     //อัพเดทชุดข้อมูลบน firebase database
+        //     firebase.database().ref("/tb_income/" + contact_id + "/").update(obj)
+        //     //window.location.href = "index.html";
+        // });
+
+        //ดักจับเหตุการเมื่อกด
+        $("#btn_add").on("click", function () {
+
+            Swal.fire({
+                title: 'คุณแน่ใจไหม?',
+                text: "คุณจะไม่สามารถเปลี่ยนกลับได้!",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'บันทึก',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    //put data form Input
+                    var dec = $("#detail").val()
+                    var price = $("#price").val()
+                    var status = $('input[name="options"]:checked').val();
+                    // build data or object
+                    var obj = {
+                        detail: dec,
+                        price: price,
+                        state: status
+                    }
+                    firebase.database().ref("/tb_income/" + contact_id + "/").update(obj)
+                    //build data form fuction
+                    db.push(obj).then(function () {
+                        Swal.fire(
+                            'สำเร็จ!', //title
+                            'ข้อมูลของคุณได้ถูกบันทึกเรียบร้อย', //message
+                            'success' //icon
+                        ).then(function (confr) {
+                            if (confr.isConfirmed) {
+                                window.location.href = "index.html"; //ไปสู้หน้า index.html
+                            }
+                        })
+
+                    }).catch(function (error) {
+                        console.log("Remove failed: " + error.message)
+                    });
+                }
+            })
+        })
+
+        $("#btn_remove").on("click", function () {
+
+            Swal.fire({
+                title: 'คุณแน่ใจไหม?',
+                text: "คุณจะไม่สามารถเปลี่ยนกลับได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ใช่ ลบมัน!',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    db.remove().then(function () {
+                        Swal.fire(
+                            'สำเร็จ!', //title
+                            'ข้อมูลของคุณได้ถูกลบเรียบร้อย', //message
+                            'success' //icon
+                        ).then(function (confr) {
+                            if (confr.isConfirmed) {
+                                window.location.href = "index.html"; //ไปสู้หน้า index.html
+                            }
+                        })
+
+                    }).catch(function (error) {
+                        console.log("Remove failed: " + error.message)
+                    });
+                }
+            })
+        })
+
+
+
+    </script>
+
+</body>
+
+</html>
